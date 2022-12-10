@@ -21,6 +21,10 @@ def star1(data):
 
 def star2(data):
     """Solve puzzle for star 2."""
+    elve_totals = [sum(elve_calories) for elve_calories in data]
+    elve_totals.sort(reverse=True)
+    top_three_total = sum(elve_totals[:3])
+    return top_three_total
 
 
 def solve(input):
