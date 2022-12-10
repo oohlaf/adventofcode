@@ -1,0 +1,8 @@
+*~
+*.py[co]
+*.swp
+*.egg-info
+.venv/
+.vscode/
+.env
+poetry.lock
