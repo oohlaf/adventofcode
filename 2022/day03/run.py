@@ -12,7 +12,14 @@ def build_prio_dict():
     return prio_dict
 
 
-def process_input(input):
+PRIO_DICT = build_prio_dict()
+
+
+def get_prio(item):
+    return PRIO_DICT[item]
+
+
+def process_compartment_input(input):
     for line in input.split("\n"):
         if len(line) % 2:
             raise ValueError
@@ -20,9 +27,23 @@ def process_input(input):
         yield (line[:middle], line[middle:])
 
 
-def parse_data(input):
-    """Parse input data."""
-    return list(process_input(input))
+def parse_compartment_data(input):
+    """Parse input data per rugsack compartment."""
+    return list(process_compartment_input(input))
+
+
+def parse_group_data(input):
+    """Parse input data per group of elfs."""
+    all_groups = []
+    cur_group = []
+    for line in input.split("\n"):
+        if len(cur_group) >= 3:
+            all_groups.append(cur_group)
+            cur_group = []
+        cur_group.append(line)
+    if len(cur_group):
+        all_groups.append(cur_group)
+    return all_groups
 
 
 def intersection(a, b):
@@ -31,11 +52,6 @@ def intersection(a, b):
 
 def star1(data):
     """Solve puzzle for star 1."""
-    prio_dict = build_prio_dict()
-
-    def get_prio(item):
-        return prio_dict[item]
-
     total_prio = 0
     for bag in data:
         comp_one, comp_two = bag
@@ -47,11 +63,18 @@ def star1(data):
 
 def star2(data):
     """Solve puzzle for star 2."""
+    total_prio = 0
+    for group in data:
+        common_set = intersection(intersection(set(group[0]), set(group[1])), set(group[2]))
+        prio = sum(map(get_prio, common_set))
+        total_prio += prio
+    return total_prio
 
 
 def solve(input):
-    data = parse_data(input)
+    data = parse_compartment_data(input)
     yield star1(data)
+    data = parse_group_data(input)
     yield star2(data)
 
 
