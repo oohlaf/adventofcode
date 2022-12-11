@@ -27,11 +27,11 @@ SHAPE_SCORES = np.array([1, 2, 3])
 
 def parse_data(input):
     """Parse input data."""
-    game_play = [(line[0], line[2]) for line in input.split("\n")]
-    return game_play
+    moves = [(line[0], line[2]) for line in input.split("\n")]
+    return moves
 
 
-def game(move):
+def play_game(move):
     opp, me = move
     opp_move = MOVE_DICT[opp]
     my_move = MOVE_DICT[me]
@@ -46,7 +46,7 @@ def star1(data):
     """Solve puzzle for star 1."""
     score = 0
     for round in data:
-        score += game(round)
+        score += play_game(round)
     return score
 
 
