@@ -13,7 +13,7 @@ def parse_data(input):
 
 
 def build_state(drawing):
-    # Initialize each stack with correspinding label
+    # Initialize each stack with corresponding label
     header = [int(x) for x in drawing[0].split(" ") if x != ""]
     # print(header)
     state = {}
