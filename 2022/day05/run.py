@@ -28,7 +28,7 @@ def build_state(drawing):
     return state
 
 
-def operate_crane(state, actions):
+def operate_crane_9000(state, actions):
     for action in actions:
         # Move n from stack1 to stack2
         _, num, _, stack1, _, stack2 = action.split(" ")
@@ -36,6 +36,19 @@ def operate_crane(state, actions):
         stack1 = int(stack1)
         stack2 = int(stack2)
         items = [state[stack1].pop() for _ in range(num)]
+        state[stack2].extend(items)
+    return state
+
+
+def operate_crane_9001(state, actions):
+    for action in actions:
+        # Move n from stack1 to stack2
+        _, num, _, stack1, _, stack2 = action.split(" ")
+        num = int(num)
+        stack1 = int(stack1)
+        stack2 = int(stack2)
+        items = [state[stack1].pop() for _ in range(num)]
+        items.reverse()
         state[stack2].extend(items)
     return state
 
@@ -50,12 +63,16 @@ def star1(data):
     """Solve puzzle for star 1."""
     drawing, actions = data
     state = build_state(drawing)
-    state = operate_crane(state, actions)
+    state = operate_crane_9000(state, actions)
     return top_crate_message(state)
 
 
 def star2(data):
     """Solve puzzle for star 2."""
+    drawing, actions = data
+    state = build_state(drawing)
+    state = operate_crane_9001(state, actions)
+    return top_crate_message(state)
 
 
 def solve(input):
