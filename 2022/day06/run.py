@@ -12,19 +12,39 @@ def is_marker(data):
     return len(data) == len(set(data))
 
 
-def process(data):
-    buffer = []
+def process_packet(state, x):
+    if len(state["sop"]) == 4:
+        state["sop"].pop(0)
+        state["sop"].append(x)
+        return is_marker(state["sop"])
+    state["sop"].append(x)
+    return False
+
+
+def process_message(state, x):
+    if len(state["som"]) == 14:
+        state["som"].pop(0)
+        state["som"].append(x)
+        return is_marker(state["som"])
+    state["som"].append(x)
+    return False
+
+
+def process(data, detect="sop"):
+    state = {
+        "sop": [],
+        "som": [],
+    }
+
     i = 0
     for x in data:
         i += 1
-        if i > 4:
-            buffer.pop(0)
-        if i > 3:
-            buffer.append(x)
-            if is_marker(buffer):
+        if process_packet(state, x):
+            if detect == "sop":
                 return i
-        else:
-            buffer.append(x)
+        if process_message(state, x):
+            if detect == "som":
+                return i
     raise ValueError
 
 
@@ -39,6 +59,11 @@ def star1(data):
 
 def star2(data):
     """Solve puzzle for star 2."""
+    line_positions = []
+    for line in data:
+        pos = process(line, detect="som")
+        line_positions.append(pos)
+    return line_positions
 
 
 def solve(input):
