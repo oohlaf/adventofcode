@@ -9,28 +9,28 @@ def parse_data(input):
     return result
 
 
-def check_left(x, y, data, w, h):
+def visible_left(x, y, data, w, h):
     for i in range(0, x):
         if data[y][i] >= data[y][x]:
             return 0
     return 1
 
 
-def check_right(x, y, data, w, h):
+def visible_right(x, y, data, w, h):
     for i in range(x + 1, w):
         if data[y][i] >= data[y][x]:
             return 0
     return 1
 
 
-def check_top(x, y, data, w, h):
+def visible_top(x, y, data, w, h):
     for j in range(0, y):
         if data[j][x] >= data[y][x]:
             return 0
     return 1
 
 
-def check_bottom(x, y, data, w, h):
+def visible_bottom(x, y, data, w, h):
     for j in range(y + 1, h):
         if data[j][x] >= data[y][x]:
             return 0
@@ -45,10 +45,10 @@ def star1(data):
     for y in range(1, h - 1):
         for x in range(1, w - 1):
             visible[y][x] = (
-                check_left(x, y, data, w, h)
-                or check_right(x, y, data, w, h)
-                or check_top(x, y, data, w, h)
-                or check_bottom(x, y, data, w, h)
+                visible_left(x, y, data, w, h)
+                or visible_right(x, y, data, w, h)
+                or visible_top(x, y, data, w, h)
+                or visible_bottom(x, y, data, w, h)
             )
     return sum(sum(visible, []))
 
