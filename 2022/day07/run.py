@@ -41,11 +41,13 @@ def build_tree(data):
     return tree
 
 
-def dir_size(tree):
+def dir_size(tree, result):
     tree_size = 0
     for k, v in tree.items():
         if isinstance(tree[k], dict):
-            tree_size += dir_size(tree[k])
+            sub_size = dir_size(tree[k], result)
+            result.append((sub_size, k))
+            tree_size += sub_size
         elif isinstance(tree[k], int):
             tree_size += v
         else:
@@ -59,7 +61,7 @@ def filter_size(tree, result, size):
         if isinstance(tree[k], dict):
             sub_size = filter_size(tree[k], result, size)
             if sub_size <= size:
-                result.append((k, sub_size))
+                result.append((sub_size, k))
             tree_size += sub_size
         elif isinstance(tree[k], int):
             tree_size += v
@@ -71,20 +73,36 @@ def filter_size(tree, result, size):
 def star1(data):
     """Solve puzzle for star 1."""
     tree = build_tree(data)
-    # size = dir_size(tree)
+    # result = []
+    # size = dir_size(tree, result)
 
     result = []
     total_size = filter_size(tree, result, 100000)
 
     filtered_size = 0
     for x in result:
-        _, size = x
+        size, _ = x
         filtered_size += size
     return filtered_size
 
 
 def star2(data):
     """Solve puzzle for star 2."""
+    tree = build_tree(data)
+    total_disk = 70000000
+    required = 30000000
+
+    result = []
+    used = dir_size(tree, result)
+
+    free = total_disk - used
+    needed = required - free
+
+    result = sorted(result)
+    for x in result:
+        size, _ = x
+        if size >= needed:
+            return size
 
 
 def solve(input):
