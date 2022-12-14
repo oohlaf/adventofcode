@@ -41,21 +41,44 @@ def tail_movement(head, tail):
     return (a, b)
 
 
+def print_title(header):
+    print(f"== {header} ==\n\n")
+
+
+def print_grid(head, tail, width, height):
+    grid = [["." for _ in range(width)] for _ in range(height)]
+    x, y = tail
+    grid[height - 1][0] = "s"
+    grid[height - 1 - y][x] = "T"
+    x, y = head
+    grid[height - 1 - y][x] = "H"
+    for line in grid:
+        for c in line:
+            print(c, end="")
+        print("\n", end="")
+    print("\n")
+    return grid
+
+
 def star1(data):
     """Solve puzzle for star 1."""
+    width = 6
+    height = 5
     head = (0, 0)
     tail = (0, 0)
     head_path = [head]
     tail_path = [tail]
+    print_title("Initial State")
+    print_grid(head, tail, width, height)
     for (move, n) in data:
-        # print(f"move {move} {n}")
+        print_title(f"{move} {n}")
         step = MOVES[move]
         for _ in range(n):
             head = head_movement(head, step)
             head_path.append(head)
             tail = tail_movement(head, tail)
             tail_path.append(tail)
-            # print(f"head {head} tail {tail}")
+            print_grid(head, tail, width, height)
     return len((set(tail_path)))
 
 
@@ -70,7 +93,7 @@ def solve(input):
 
 
 def main():
-    input_file = Path(__file__).parent / "input.txt"
+    input_file = Path(__file__).parent / "test_input.txt"
     input_text = input_file.read_text().rstrip()
     solutions = solve(input_text)
     print("\n".join(str(s) for s in solutions))
