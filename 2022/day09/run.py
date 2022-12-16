@@ -42,16 +42,46 @@ def tail_movement(head, tail):
 
 
 def print_title(header):
-    print(f"== {header} ==\n\n")
+    print(f"== {header} ==\n")
 
 
 def print_grid(head, tail, width, height):
     grid = [["." for _ in range(width)] for _ in range(height)]
     x, y = tail
     grid[height - 1][0] = "s"
-    grid[height - 1 - y][x] = "T"
+    try:
+        grid[height - 1 - y][x] = "T"
+    except IndexError:
+        pass
     x, y = head
-    grid[height - 1 - y][x] = "H"
+    try:
+        grid[height - 1 - y][x] = "H"
+    except IndexError:
+        pass
+    for line in grid:
+        for c in line:
+            print(c, end="")
+        print("\n", end="")
+    print("\n")
+    return grid
+
+
+def print_grid_path(rope_path, i, width, height):
+    grid = [["." for _ in range(width)] for _ in range(height)]
+    x, y = rope_path[0][0]
+    try:
+        grid[height - 1 - y][x] = "s"
+    except IndexError:
+        pass
+    for j in range(9, -1, -1):
+        try:
+            x, y = rope_path[j][i]
+            if j:
+                grid[height - 1 - y][x] = str(j)
+            else:
+                grid[height - 1 - y][x] = "H"
+        except IndexError:
+            pass
     for line in grid:
         for c in line:
             print(c, end="")
@@ -68,22 +98,44 @@ def star1(data):
     tail = (0, 0)
     head_path = [head]
     tail_path = [tail]
-    print_title("Initial State")
-    print_grid(head, tail, width, height)
+    # print_title("Initial State")
+    # print_grid(head, tail, width, height)
     for (move, n) in data:
-        print_title(f"{move} {n}")
+        # print_title(f"{move} {n}")
         step = MOVES[move]
         for _ in range(n):
             head = head_movement(head, step)
             head_path.append(head)
             tail = tail_movement(head, tail)
             tail_path.append(tail)
-            print_grid(head, tail, width, height)
+            # print_grid(head, tail, width, height)
     return len((set(tail_path)))
 
 
 def star2(data):
     """Solve puzzle for star 2."""
+    width = 21
+    height = 26
+    head = (0, 0)
+    rope_path = []
+    for j in range(10):
+        rope_path.append([head])
+    # print_title("Initial State")
+    # print_grid_path(rope_path, 0, width, height)
+    i = 0
+    for (move, n) in data:
+        # print_title(f"{move} {n}")
+        step = MOVES[move]
+        for _ in range(n):
+            head = head_movement(rope_path[0][i], step)
+            rope_path[0].append(head)
+            for j in range(1, 10):
+                tail = tail_movement(head, rope_path[j][i])
+                rope_path[j].append(tail)
+                head = tail
+            i += 1
+        # print_grid_path(rope_path, i, width, height)
+    return len((set(rope_path[9])))
 
 
 def solve(input):
@@ -93,7 +145,7 @@ def solve(input):
 
 
 def main():
-    input_file = Path(__file__).parent / "test_input.txt"
+    input_file = Path(__file__).parent / "input.txt"
     input_text = input_file.read_text().rstrip()
     solutions = solve(input_text)
     print("\n".join(str(s) for s in solutions))
