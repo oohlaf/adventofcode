@@ -70,7 +70,8 @@ def star2(data):
         for c in f(cpu_state, ins[1]):
             cpu_state = c
             crt_draw(cpu_state)
-    print()
+    print("")
+    return 0
 
 
 def solve(input):
