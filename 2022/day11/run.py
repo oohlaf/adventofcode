@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from copy import deepcopy
 from pathlib import Path
 
 
@@ -56,7 +57,8 @@ def print_status(round, monkeys):
         print(f"Monkey {index}: {m['items']}")
 
 
-def print_inspects(monkeys):
+def print_inspects(round, monkeys):
+    print(f"== After round {round} ==")
     for index, m in enumerate(monkeys):
         print(f"Monkey {index} inspected items {m['inspect']} times.")
 
@@ -71,21 +73,48 @@ def monkey_business(monkeys):
 
 def star1(data):
     """Solve puzzle for star 1."""
-    for r in range(1, 21):
+    for r in range(20):
         play_round(data)
-        print_status(r, data)
-    print_inspects(data)
+        print_status(r + 1, data)
+    print_inspects(r + 1, data)
     return monkey_business(data)
+
+
+def play_round_worried(monkeys, red):
+    for m in monkeys:
+        while m["items"]:
+            i = m["items"].pop(0)
+            m["inspect"] += 1
+            value = m.get("op_val", i)
+            if m["op"] == "*":
+                i *= value
+            else:
+                i += value
+            i %= red
+            if i % m["test"]:
+                monkeys[m["false"]]["items"].append(i)
+            else:
+                monkeys[m["true"]]["items"].append(i)
 
 
 def star2(data):
     """Solve puzzle for star 2."""
+    red = 1
+    for m in data:
+        red *= m["test"]
+    for r in range(10000):
+        play_round_worried(data, red)
+        if r in [0, 19, 999, 8999, 9999]:
+            # print_status(r + 1, data)
+            print_inspects(r + 1, data)
+    return monkey_business(data)
 
 
 def solve(input):
     data = parse_data(input)
+    data2 = deepcopy(data)
     yield star1(data)
-    yield star2(data)
+    yield star2(data2)
 
 
 def main():
