@@ -2,6 +2,7 @@
 *.py[co]
 *.swp
 *.egg-info
+*.txt
 .venv/
 .vscode/
 .env
